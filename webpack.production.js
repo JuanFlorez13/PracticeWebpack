@@ -1,11 +1,15 @@
-// WebPack empaqueta nuestro codigo para la produccion, prepara el proyecto para el despliegue
-
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = {
-    mode: 'development',
-    output:{clean:true},
+    mode: 'production',
+    output:{
+        clean:true,
+        filename: 'main.[contenthash].js'
+    },
+    
     module: {
         rules: [
             {
@@ -30,9 +34,28 @@ module.exports = {
                 generator: {
                     filename: 'static/[hash][ext][query]'
                 }
+            },
+            {
+                test: /\.m?js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader",
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
+                }
             }
         ]
     },
+
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new TerserPlugin(),
+            new CssMinimizerPlugin(),
+        ],
+    },
+
     plugins: [
         new HtmlWebpackPlugin({
             template: 'src/index.html',
@@ -40,7 +63,7 @@ module.exports = {
             filename: 'index.html',
         }),
         new MiniCssExtractPlugin({
-            filename: "main.css"
+            filename: "[name].[fullhash].css",
         })
     ]
 }
