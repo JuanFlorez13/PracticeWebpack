@@ -1,0 +1,9 @@
+/* Add Style in Saludar.js */
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    color:grey;
+}
